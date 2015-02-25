@@ -169,3 +169,188 @@ if(isset($_GET['id'])){
 	}
 }
 ?>
+
+<script>
+
+$(document).ready(function() {
+	$( '[id^="btnExtendWarranty_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		collapseExtendWarranty(id);
+	});
+
+	$( '[id^="btnCancelExtendWarranty_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		cancelExtendWarranty(id);
+	});
+
+	$( '[id^="submitExtendWarranty_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		processExtendWarranty(id);
+	});
+
+	$( '[id^="btnReturn_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		collapseReturn(id);
+	});
+
+	$( '[id^="btnCancelReturn_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		cancelReturn(id);
+	});
+
+	$( '[id^="submitReturn_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		processReturn(id);
+	});
+
+	$( '[id^="btnInsideWorkOrder_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		collapseInsideWorkOrder(id);
+	});
+
+	$( '[id^="btnCancelInsideWorkOrder_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		cancelInsideWorkOrder(id);
+	});
+
+	$( '[id^="submitInsideWorkOrder_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		processInsideWorkOrder(id);
+	});
+
+
+	function collapseExtendWarranty(id){	
+		$( "#collapseExtendWarranty_"+id ).removeClass("hide");
+		$( "#collapseExtendWarranty_"+id ).hide();
+		$( "#collapseExtendWarranty_"+id ).fadeIn( "slow", function() {});
+		
+	}
+
+	function cancelExtendWarranty(id){	
+		$( "#collapseExtendWarranty_"+id ).addClass("hide");
+		$( "#collapseExtendWarranty_"+id ).fadeIn( "slow", function() {});
+		
+	}
+
+	function processExtendWarranty(id){	
+		var warranty = $( "#warranty_"+id ).val();
+		$.ajax({
+	    	url: "post.php?extend_warranty="+id+"&warranty="+warranty+"",       
+		}).success(function(response) {
+	  		$("#response").html(response);
+	  		cancelExtendWarranty(id);
+			loadReturnsHistory();
+			loadSalesHistory();
+		});
+	}
+
+	function collapseReturn(id){	
+		$( "#collapseReturn_"+id ).removeClass("hide");
+		$( "#collapseReturn_"+id ).hide();
+		$( "#collapseReturn_"+id ).fadeIn( "slow", function() {});
+		
+	}
+
+	function cancelReturn(id){	
+		$( "#collapseReturn_"+id ).addClass("hide");
+		$( "#collapseReturn_"+id ).fadeIn( "slow", function() {});
+		
+	}
+
+	function processReturn(id){	
+		var reason = $( "#reason_"+id ).val();
+		$.ajax({
+	    	url: "post.php?computer_return="+id+"&reason="+reason+"",       
+		}).success(function(response) {
+	  		$("#response").html(response);
+	  		cancelReturn(id);
+			loadReturnsHistory();
+			loadSalesHistory();
+		});
+	}
+
+	function collapseInsideWorkOrder(id){	
+		$( "#collapseInsideWorkOrder_"+id ).removeClass("hide");
+		$( "#collapseInsideWorkOrder_"+id ).hide();
+		$( "#collapseInsideWorkOrder_"+id ).fadeIn( "slow", function() {});
+		
+	}
+
+	function cancelInsideWorkOrder(id){	
+		$( "#collapseInsideWorkOrder_"+id ).addClass("hide");
+		$( "#collapseInsideWorkOrder_"+id ).fadeIn( "slow", function() {});
+		
+	}
+
+	function processInsideWorkOrder(id){	
+		var customer = $( "#customer_"+id ).val();
+		var type = $( "#type_"+id ).val();
+		var make = $( "#make_"+id ).val();
+		var model = $( "#model_"+id ).val();
+		var serial = $( "#serial_"+id ).val();
+		var scope = $( "#scope_"+id ).val();
+		var takeInNotes = $( "#takein_notes_"+id ).val();
+		$.ajax({
+	    	url: "post.php?new_inside_work_order="+id+"&scope="+scope+"&takein_notes="+takeInNotes+"&type="+type+"&make="+make+"&model="+model+"&serial="+serial+"&customer_id="+customer+"",       
+		}).success(function(response) {
+	  		$("#response").html(response);
+	  		cancelInsideWorkOrder(id);
+			loadOpenWorkOrders();
+			loadWorkOrderHistory();
+		});
+	}
+
+	function loadReturnsHistory(){
+		var customerId = "<?php echo $id; ?>";
+		$.ajax({
+	    	url: "customer_details_returns.php?id="+customerId+"",      
+		}).success(function(response) {
+			$("#returnsHistory").html(response); 		
+		});
+	}
+
+	function loadSalesHistory(){
+		var customerId = "<?php echo $id; ?>";
+		$.ajax({
+	    	url: "customer_details_sales.php?id="+customerId+"",      
+		}).success(function(response) {
+			$("#salesHistory").html(response); 		
+		});
+	}
+
+	function loadOpenWorkOrders(){
+		var customerId = "<?php echo $id; ?>";
+		$.ajax({
+	    	url: "customer_details_open_work_orders.php?id="+customerId+"",      
+		}).success(function(response) {
+			$("#openWorkOrders").html(response); 		
+		});
+	}
+
+	function loadWorkOrderHistory(){
+		var customerId = "<?php echo $id; ?>";
+		$.ajax({
+	    	url: "customer_details_work_order_history.php?id="+customerId+"",      
+		}).success(function(response) {
+			$("#workOrderHistory").html(response); 		
+		});
+	}
+})

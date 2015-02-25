@@ -75,3 +75,73 @@ $sql = mysql_query("SELECT * FROM customer_notes, users
 }
 
 ?>
+
+<script>
+
+$(document).ready(function() {
+
+	$( '[id^="delete_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		deleteNote(id);
+	});
+
+	$( '[id^="edit_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		editNote(id);
+	});
+
+	$( '[id^="cancelEdit_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		cancelEdit(id);
+	});
+
+	$( '[id^="submitEdit_"]' ).click(function() {
+		var id = this.id;
+		id = id.split("_");
+		id = id[1];
+		processEditNote(id);
+	});
+
+	function deleteNote(id){	
+		$.ajax({
+	    	url: "post.php?delete_customer_note="+id+"",       
+		}).success(function(response) {
+	  		$( "#note_"+id ).slideUp( "slow", function() {
+			});
+		});
+	}
+
+	function editNote(id){	
+		$( "#noteCol2_"+id ).addClass("hide");
+		$( "#noteEditCol2_"+id ).removeClass("hide");
+		$( "#noteEditCol2_"+id ).hide();
+		$( "#noteEditCol2_"+id ).fadeIn( "slow", function() {});
+		
+	}
+
+	function cancelEdit(id){
+		$( "#noteEditCol2_"+id ).addClass("hide");
+		$( "#noteCol2_"+id ).removeClass("hide");
+		$( "#noteCol2_"+id ).hide();
+		$( "#noteCol2_"+id ).fadeIn( "slow", function() {});
+		
+	}
+
+	function processEditNote(id){	
+		var note = $( "#txtNote_"+id ).val();
+		$.ajax({
+	    	url: "post.php?edit_customer_note="+id+"&note="+note+"",       
+		}).success(function(response) {
+	  		cancelEdit(id);
+	  		$( "#noteHolder_"+id ).html($( "#txtNote_"+id ).val());
+		});
+	}
+})
+
+</script>

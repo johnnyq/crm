@@ -252,7 +252,12 @@
 </div>
 
 
+<?php 
+	
+	include "new_sale_modal.php";
+	include "includes/footer.php";
 
+?>
 
 <script>
 
@@ -266,12 +271,110 @@ $(document).ready(function() {
 	$('#accordion').on('show.bs.collapse', function () {
     $('#accordion .in').collapse('hide');
 	});
+
+	function loadSalesHistory(){
+    	var customerId = "<?php echo $id; ?>";
+    	$.ajax({
+	    	url: "customer_details_sales.php?id="+customerId+"",      
+		}).success(function(response) {
+			$("#salesHistory").html(response); 		
+		});
+    }
+
+    function loadReturnsHistory(){
+    	var customerId = "<?php echo $id; ?>";
+    	$.ajax({
+	    	url: "customer_details_returns.php?id="+customerId+"",      
+		}).success(function(response) {
+			$("#returnsHistory").html(response); 		
+		});
+    }
+
+    function loadOpenWorkOrders(){
+    	var customerId = "<?php echo $id; ?>";
+    	$.ajax({
+	    	url: "customer_details_open_work_orders.php?id="+customerId+"",      
+		}).success(function(response) {
+			$("#openWorkOrders").html(response); 		
+		});
+    }
+
+    function loadWorkOrderHistory(){
+    	var customerId = "<?php echo $id; ?>";
+    	$.ajax({
+	    	url: "customer_details_work_order_history.php?id="+customerId+"",      
+		}).success(function(response) {
+			$("#workOrderHistory").html(response); 		
+		});
+    }
+
+    function loadNotes(){
+    	var customerId = "<?php echo $id; ?>";
+    	$.ajax({
+	    	url: "customer_details_notes.php?id="+customerId+"",      
+		}).success(function(response) {
+			$("#notesHistory").html(response); 		
+		});
+    }
+
+
+	$("#formSale").submit(function(e)
+	{
+		var postData = $(this).serializeArray();	   
+	    $.ajax(
+	    {
+	        url : "post.php",
+	        type: "POST",
+	        data : postData,
+	        success : function(response)
+	        {
+	            $("#response").html(response);
+	        	loadSalesHistory();
+	        	$('#collapseSale').collapse('toggle');
+	        	$("#formSale")[0].reset();
+	        }, 	
+	    });
+	    e.preventDefault(); //STOP default POST action
+	});
+
+	$("#formWorkOrder").submit(function(e)
+	{
+		var postData = $(this).serializeArray();	   
+	    $.ajax(
+	    {
+	        url : "post.php",
+	        type: "POST",
+	        data : postData,
+	        success : function(response)
+	        {
+	            $("#response").html(response);
+	            loadWorkOrderHistory();
+	            loadOpenWorkOrders();
+	            $('#collapseWorkOrder').collapse('toggle');
+	        	$("#formWorkOrder")[0].reset();
+	        }, 	
+	    });
+	    e.preventDefault(); //STOP default POST action
+	});
+
+	$("#formNote").submit(function(e)
+	{
+		var postData = $(this).serializeArray();	   
+	    $.ajax(
+	    {
+	        url : "post.php",
+	        type: "POST",
+	        data : postData,
+	        success : function(response)
+	        {
+	            $("#response").html(response);
+	            loadNotes();
+	            $('#collapseNote').collapse('toggle');
+	        	$("#formNote")[0].reset();
+	        }, 	
+	    });
+	    e.preventDefault(); //STOP default POST action
+	});
 })
 
 </script>
-
-<?php 
-	
-	include "includes/footer.php";
-
-?>
